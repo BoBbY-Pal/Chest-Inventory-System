@@ -1,6 +1,8 @@
-﻿using Singleton;
+﻿using System;
+using Singleton;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace DefaultNamespace
 {
@@ -8,14 +10,26 @@ namespace DefaultNamespace
     {
         [SerializeField] private int _coins;
         [SerializeField] private int _gems;
-        [SerializeField] private TextMeshProUGUI coinTxt;
-        [SerializeField] private TextMeshProUGUI gemsTxt;
+        [SerializeField] private Text coinTxt;
+        [SerializeField] private Text gemsTxt;
         private bool hasEnoughGems;
+
+        private void Start()
+        {
+            ShowPlayerInventory();
+        }
 
         public void ShowPlayerInventory()
         {
             coinTxt.text = _coins.ToString();
             gemsTxt.text = _gems.ToString();
+        }
+
+        public void UpdatePlayerInventory(int coins, int gems)
+        {
+            _coins = coins;
+            _gems = gems;
+            ShowPlayerInventory();
         }
         public bool RemoveGems(int gems)
         {
@@ -23,9 +37,14 @@ namespace DefaultNamespace
             {
                 _gems -= gems;
                 ShowPlayerInventory();
-                return hasEnoughGems = true;
+                hasEnoughGems = true;
             }
-            return hasEnoughGems = false;
+            else
+            {
+                hasEnoughGems = false;
+            }
+            
+            return hasEnoughGems;
         }
     }
 }

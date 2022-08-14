@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using ScriptableObjects;
 using Singleton;
-
+using UI;
 using UnityEngine;
 
 using Button = UnityEngine.UI.Button;
@@ -33,12 +33,6 @@ public class ChestService : MonoGenericSingleton<ChestService>
         claimChestBtn.onClick.AddListener(SpawnChest);
         
     }
-    
-    private void Start()
-    {
-        
-        
-    }
 
 
     private void SpawnChest()
@@ -57,7 +51,7 @@ public class ChestService : MonoGenericSingleton<ChestService>
         {
             string msg = "Chest slots are full";
             Debug.Log(msg);
-            // UIHandler.Instance.DisplayMsg(msg);
+            UIHandler.Instance.DisplayMessage(msg);
         }
         
     }
@@ -68,30 +62,6 @@ public class ChestService : MonoGenericSingleton<ChestService>
         ChestController chestController = new ChestController(chestModel, chestPrefab);
         return chestController;
     }
-
-    // public void CreateAndAddChest()
-    // {
-    //     int randomNum = Random.Range(0, _chestTypeSoList.chestsTypeList.Length);
-    //     chestSlotFull = 0;
-    //     for (int i = 0; i < chests.Length; i++)
-    //     {
-    //         if (chests[i].isEmpty)
-    //         {
-    //             chests[i].AddChest(_chestTypeSoList.chestsTypeList[randomNum]);
-    //             i = chests.Length + 1;
-    //         }
-    //         else
-    //         {
-    //             chestSlotFull++;
-    //         }
-    //     }
-    //
-    //     if (chestSlotFull == chests.Length)
-    //     {
-    //         string msg = "Chest slots are full";
-    //         // UIHandler.Instance.DisplayMsg(msg);
-    //     }
-    // }
 
     public void SetChestView(ChestView view)
     {
@@ -116,6 +86,23 @@ public class ChestService : MonoGenericSingleton<ChestService>
         if (chestUnlockingList.Count > 0)
         {
             chestUnlockingList[0]._chestController.StartTime();
+        }
+    }
+
+    public void AddChestToUnlockList()
+    {
+        string msg;
+        if (isChestTimerStarted && noOfChestCanUnlock == chestUnlockingList.Count)
+        {
+            msg = "Can't unlock more chest!";
+            UIHandler.Instance.DisplayMessage(msg);
+        }
+        else
+        {
+            msg = "Chest added to the list!";
+            UIHandler.Instance.DisplayMessage(msg);
+            chestUnlockingList.Add(chestToUnlock);
+            chestToUnlock._chestController.ChangeState(ChestState.Unlocking);
         }
     }
 }

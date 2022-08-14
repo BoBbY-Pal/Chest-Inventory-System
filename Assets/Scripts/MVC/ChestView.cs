@@ -1,5 +1,3 @@
-
-using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -23,7 +21,7 @@ public class ChestView : MonoBehaviour
     void Start()
     {
         SetParent();
-        
+        DisplayChest();
         // _chestController.SetupEmptyChest();
     }
 
@@ -34,6 +32,7 @@ public class ChestView : MonoBehaviour
         //     DecreaseTimer()
         //         
         // }
+        
         if (_chestController.isStartTime)
         {
             _chestController.StartUnlocking();
@@ -45,7 +44,11 @@ public class ChestView : MonoBehaviour
         transform.SetParent(ChestService.Instance.chestSlotGroup.transform);
     }
 
-    public void Initialize(ChestController chestController) => _chestController = chestController;
+    public void Initialize(ChestController chestController)
+    {
+        _chestController = chestController;
+        Debug.Log("Controller initialized");
+    }
 
     public void DisplayChest()
     {
@@ -85,5 +88,9 @@ public class ChestView : MonoBehaviour
     {
         unlockGemsTxt.text = gems.ToString();
     }
-    
+
+    public void DestroyChest()
+    {
+        Destroy(this);
+    }
 }

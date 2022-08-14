@@ -20,7 +20,20 @@ namespace UI
             ChestService.Instance.UnlockUsingGems();
         }
 
-        public void DisplayMessageWithButton(string msg, int gems, bool isChestInList)
+        public void OnTimerBtnClicked()
+        {
+            messageScreen.SetActive(false);
+            if (ChestService.Instance.isChestTimerStarted)
+            {
+                ChestService.Instance.AddChestToUnlockList();
+            }
+            else
+            {
+                ChestService.Instance.UnlockChest();
+            }
+        }
+        
+        public void DisplayMessageWithButton(string msg, int gems, ChestState state)
         {
             messageScreen.SetActive(true);
             string message;
@@ -38,12 +51,12 @@ namespace UI
             gemsBtnTxt.text = gems.ToString();
             messageTxt.text = msg;
 
-            IsChestAdded(isChestInList);
+            IsChestAdded(state);
         }
 
-        private void IsChestAdded(bool isChestInList)
+        private void IsChestAdded(ChestState state)
         {
-            if (isChestInList)
+            if (state == ChestState.Unlocking)
             {
                 timerBtnTxt.gameObject.SetActive(false);
             }

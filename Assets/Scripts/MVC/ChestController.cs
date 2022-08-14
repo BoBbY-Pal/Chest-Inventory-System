@@ -1,9 +1,7 @@
 using DefaultNamespace;
-using Enums;
-using ScriptableObjects;
 using UI;
 using UnityEngine;
-using UnityEngine.PlayerLoop;
+
 
 
 public enum ChestState
@@ -37,14 +35,12 @@ public class ChestController : MonoBehaviour
 
     // private Sprite _sprite;
 
-    public ChestController(ChestModel chestModel, ChestView chestView)
+    public ChestController(ChestModel chestModel, ChestView view)
     {
         ChestModel = chestModel;
-        chestView.Initialize(this);
-        ChestView = GameObject.Instantiate<ChestView>(chestView);
+        ChestView = GameObject.Instantiate<ChestView>(view);
+        ChestView.Initialize(this);
         ChangeState(ChestState.Locked);
-        chestView.DisplayChest();
-       
     }
 
     // public void SetupEmptyChest()
@@ -65,7 +61,12 @@ public class ChestController : MonoBehaviour
 
     public void StartUnlocking()
     {
-        throw new System.NotImplementedException();
+        ChestView.ShowUnlockGems(ChestModel.GemsRequiredToUnlock);
+        ChestView.ShowUnlockTime(ChestModel.unlockTime);
+        if (ChestModel.unlockTime <= 0)
+        {
+            ChestUnlocked();
+        }
     }
 
     public void ChestBtnPressed()
@@ -81,7 +82,15 @@ public class ChestController : MonoBehaviour
         if (CheckState(ChestState.Locked))
         {
             msg = "Unlock this chest";
-            // ChestService.Instance.SetChestView(ChestView);
+            ChestService.Instance.SetChestView(ChestView);
+            UIHandler.Instance.DisplayMessageWithButton(msg, ChestModel.GemsRequiredToUnlock, ChestState.Unlocking);
+        }
+        else
+        {
+            PlayerInventory.Instance.UpdatePlayerInventory(ChestModel.coins, ChestModel.gems);
+            msg = $"{ChestModel.coins} coins and {ChestModel.gems} gems added to the inventory!";
+            UIHandler.Instance.DisplayMessage(msg);
+            ChestView.DestroyChest();
         }
     }
 
