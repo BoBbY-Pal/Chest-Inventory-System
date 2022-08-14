@@ -17,7 +17,7 @@ public class ChestView : MonoBehaviour
     void Start()
     {
         SetParent();
-        DisplayChest();
+        
     }
 
     void Update()
@@ -47,11 +47,9 @@ public class ChestView : MonoBehaviour
         
     }
 
-    public void DisplayChest()
+    public void DisplayChest(float time)
     {
-        
-
-        chestTimerTxt.text = _chestController.TimeToString();
+        chestTimerTxt.text = _chestController.TimeToString(time);
         chestTypeTxt.text = _chestController.ChestModel.ChestType.ToString();
         chestStatusTxt.text = _chestController.GetState.ToString();
 
@@ -71,10 +69,15 @@ public class ChestView : MonoBehaviour
         OnChestButtonPressed?.Invoke();
     }
 
-    public void ShowUnlockTime(float time)
+    public void UpdateTime(string time)
     {
-        chestTimerTxt.text = time.ToString();
+        chestTimerTxt.text = time;
     }
+    
+    // public void ShowUnlockTime(float time)
+    // {
+    //     chestTimerTxt.text = time.ToString();
+    // }
     
 
     public void DestroyChest()

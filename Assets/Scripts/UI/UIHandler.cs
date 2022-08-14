@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using ScriptableObjects;
-using Singleton;
+﻿using Singleton;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -17,21 +15,26 @@ namespace UI
         [SerializeField] private TextMeshProUGUI timerBtnTxt;
         [SerializeField] private TextMeshProUGUI gemsBtnTxt;
 
+        public static event System.Action OnUnlockUsingGem;
         public void OnGemsBtnClicked()
         {
             messageScreen.SetActive(false);
-            ChestService.Instance.UnlockUsingGems();
+            OnUnlockUsingGem?.Invoke();
+            // ChestService.Instance.UnlockUsingGems();
         }
         
         public void OnTimerBtnClicked()
         {
             messageScreen.SetActive(false);
+            
             if (ChestService.Instance.isChestTimerStarted)
             {
+                Debug.Log("entered ontimer btn clicked and chestimerstarted is true");
                 ChestService.Instance.AddChestToUnlockList();
             }
             else
             {
+                Debug.Log("entered ontimer btn clicked and chestimerstarted is false");
                 ChestService.Instance.UnlockChest();
             }
         }

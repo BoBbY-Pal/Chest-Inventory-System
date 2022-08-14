@@ -35,7 +35,6 @@ public class ChestService : MonoGenericSingleton<ChestService>
         
     }
 
-
     private void SpawnChest()
     {
         chests = new ChestController[noOfChests];
@@ -77,11 +76,6 @@ public class ChestService : MonoGenericSingleton<ChestService>
         chestToUnlock._chestController.StartTimer();
     }
 
-    public void UnlockUsingGems()
-    {
-        chestToUnlock._chestController.UnlockUsingGems();
-    }
-
     public void UnlockNextChest(ChestView chestView)
     {
         chestUnlockingList.Remove(chestView);
@@ -97,14 +91,14 @@ public class ChestService : MonoGenericSingleton<ChestService>
         string header;
         if (isChestTimerStarted && noOfChestCanUnlock == chestUnlockingList.Count)
         {
-            msg = "Can't unlock more chest!";
             header = "No More Space!";
+            msg = "Can't unlock more chest!";
             UIHandler.Instance.DisplayMessage(header, msg);
         }
         else
         {
-            msg = "Chest added to the list!";
             header = "Unlock Chest!";
+            msg = "Chest added to the list!";
             UIHandler.Instance.DisplayMessage(header, msg);
             chestUnlockingList.Add(chestToUnlock);
             chestToUnlock._chestController.ChangeState(ChestState.Unlocking);

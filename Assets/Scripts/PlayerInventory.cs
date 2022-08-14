@@ -16,10 +16,10 @@ namespace DefaultNamespace
 
         private void Start()
         {
-            ShowPlayerInventory();
+            DisplayPlayerInventory();
         }
 
-        public void ShowPlayerInventory()
+        public void DisplayPlayerInventory()
         {
             coinTxt.text = _coins.ToString();
             gemsTxt.text = _gems.ToString();
@@ -29,14 +29,15 @@ namespace DefaultNamespace
         {
             _coins = coins;
             _gems = gems;
-            ShowPlayerInventory();
+            DisplayPlayerInventory();
         }
-        public bool RemoveGems(int gems)
+        
+        public bool DeductGems(int gems)
         {
             if (gems <= _gems)
             {
                 _gems -= gems;
-                ShowPlayerInventory();
+                DisplayPlayerInventory();
                 hasEnoughGems = true;
             }
             else

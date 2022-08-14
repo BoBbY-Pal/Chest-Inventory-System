@@ -30,13 +30,26 @@ public class ChestController : MonoBehaviour
         ChestView.Initialize(this);
         ChangeState(ChestState.Locked);
         UIHandler.Instance.DisplayChestDetails(ChestModel.ChestType.ToString(), ChestModel.coinsRange, ChestModel.gemsRange);
-        ChestView.OnChestButtonPressed += ChestBtnPressed;
+        ChestView.DisplayChest(ChestModel.unlockTime);
+        SubscribeEvents();
+        
     }
 
+    private void SubscribeEvents()
+    {
+        ChestView.OnChestButtonPressed += ChestBtnPressed;
+        UIHandler.OnUnlockUsingGem += UnlockUsingGems;
+    }
+
+    private void UnSubscribeEvents()
+    {
+        ChestView.OnChestButtonPressed -= ChestBtnPressed;
+        UIHandler.OnUnlockUsingGem -= UnlockUsingGems;
+    }
+    
     public void StartUnlocking()
     {
         
-        ChestView.ShowUnlockTime(ChestModel.unlockTime);
         if (ChestModel.unlockTime <= 0)
         {
             ChestUnlocked();
@@ -62,22 +75,15 @@ public class ChestController : MonoBehaviour
             msg = $"{ChestModel.coins} coins and {ChestModel.gems} gems added to the inventory!";
             header = "Congratulations!";
             UIHandler.Instance.DisplayMessage(header, msg);
-            ChestView.OnChestButtonPressed -= ChestBtnPressed;
+            UnSubscribeEvents();
             ChestView.DestroyChest();
         }
     }
-    
-    public string TimeToString()
+
+    private void UnlockUsingGems()
     {
-        TimeSpan time = TimeSpan.FromSeconds(ChestModel.unlockTime);
-        string timeString = time.ToString(@"hh\:mm\:ss");
-        return timeString;
-    }
-    
-    public void UnlockUsingGems()
-    {
-        bool b_canUnlock = PlayerInventory.Instance.RemoveGems(ChestModel.GemsRequiredToUnlock);
-        if (b_canUnlock)
+        bool canUnlock = PlayerInventory.Instance.DeductGems(ChestModel.GemsRequiredToUnlock);
+        if (canUnlock)
         {
             ChestUnlocked();
         }
@@ -95,7 +101,7 @@ public class ChestController : MonoBehaviour
         ChestModel.GemsRequiredToUnlock = 0;
         ChestService.Instance.isChestTimerStarted = false;
         ChestModel.unlockTime = 0;
-        ChestView.DisplayChest();
+        ChestView.DisplayChest(ChestModel.unlockTime);
         ChestService.Instance.UnlockNextChest(ChestView);
     }
 
@@ -107,6 +113,15 @@ public class ChestController : MonoBehaviour
         while (ChestModel.unlockTime > 0)
         {
             ChestModel.unlockTime -= Time.deltaTime;
+            string value = TimeToString(ChestModel.unlockTime);
+            ChestView.UpdateTime(value);
         }
+    }
+      
+    public string TimeToString(float value)
+    {
+        TimeSpan time = TimeSpan.FromSeconds(value);
+        string timeString = time.ToString(@"hh\:mm\:ss");
+        return timeString;
     }
 }
