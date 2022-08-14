@@ -27,8 +27,8 @@ namespace DefaultNamespace
 
         public void UpdatePlayerInventory(int coins, int gems)
         {
-            _coins = coins;
-            _gems = gems;
+            _coins += coins;
+            _gems += gems;
             DisplayPlayerInventory();
         }
         

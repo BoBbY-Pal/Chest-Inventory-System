@@ -1,4 +1,3 @@
-using System;
 using DefaultNamespace;
 using UI;
 using UnityEngine;
@@ -14,23 +13,19 @@ public class ChestController : MonoBehaviour
     public ChestModel ChestModel { get; }
     private ChestView ChestView { get; }
 
-    private ChestState _state;
+    private ChestState _currentState;
 
-    public ChestState GetState => _state;
-    public void ChangeState(ChestState chestState) => _state = chestState;
-    public bool CheckState(ChestState chestState) => _state == chestState;
-
-    public bool isStartTime;
-   
-
+    public ChestState GetCurrentState => _currentState;
+    public void ChangeState(ChestState chestState) => _currentState = chestState;
+    // public bool CheckState(ChestState chestState) => _state == chestState;
+    
     public ChestController(ChestModel chestModel, ChestView view)
     {
         ChestModel = chestModel;
         ChestView = GameObject.Instantiate<ChestView>(view);
-        ChestView.Initialize(this);
+        ChestView.Initialize(this, ChestModel.unlockTime);
         ChangeState(ChestState.Locked);
         UIHandler.Instance.DisplayChestDetails(ChestModel.ChestType.ToString(), ChestModel.coinsRange, ChestModel.gemsRange);
-        ChestView.DisplayChest(ChestModel.unlockTime);
         SubscribeEvents();
         
     }
@@ -49,7 +44,6 @@ public class ChestController : MonoBehaviour
     
     public void StartUnlocking()
     {
-        
         if (ChestModel.unlockTime <= 0)
         {
             ChestUnlocked();
@@ -61,22 +55,29 @@ public class ChestController : MonoBehaviour
         string msg;
         string header;
         
-        if (CheckState(ChestState.Locked))
+        switch (GetCurrentState)
         {
-            msg = "Please select how you want to open the chest";
-            header = "Unlock Chest!";
-            ChestService.Instance.SetChestView(ChestView);
-            UIHandler.Instance.DisplayMessageWithButton(header, msg, ChestModel.GemsRequiredToUnlock, ChestState.Unlocking);
-        }
-        else
-        {
+            case ChestState.Locked:
+                msg = "Please select how you want to open the chest";
+                header = "Unlock Chest!";
+                ChestService.Instance.SetChestView(ChestView);
+                UIHandler.Instance.DisplayMessageWithButton(header, msg, ChestModel.GemsRequiredToUnlock, GetCurrentState);
+                break;
             
-            PlayerInventory.Instance.UpdatePlayerInventory(ChestModel.coins, ChestModel.gems);
-            msg = $"{ChestModel.coins} coins and {ChestModel.gems} gems added to the inventory!";
-            header = "Congratulations!";
-            UIHandler.Instance.DisplayMessage(header, msg);
-            UnSubscribeEvents();
-            ChestView.DestroyChest();
+            case ChestState.Unlocking:
+                msg = $"Do you want to unlock it now for {ChestModel.GemsRequiredToUnlock} gems?";
+                header = "Unlocking!";
+                UIHandler.Instance.DisplayMessageWithButton(header, msg, ChestModel.GemsRequiredToUnlock, GetCurrentState);
+                break;
+            
+            default:
+                PlayerInventory.Instance.UpdatePlayerInventory(ChestModel.coins, ChestModel.gems);
+                msg = $"{ChestModel.coins} coins and {ChestModel.gems} gems added to the inventory!";
+                header = "Congratulations!";
+                UIHandler.Instance.DisplayMessage(header, msg);
+                UnSubscribeEvents();
+                ChestView.DestroyChest();
+                break;
         }
     }
 
@@ -101,27 +102,7 @@ public class ChestController : MonoBehaviour
         ChestModel.GemsRequiredToUnlock = 0;
         ChestService.Instance.isChestTimerStarted = false;
         ChestModel.unlockTime = 0;
-        ChestView.DisplayChest(ChestModel.unlockTime);
+        ChestView.DisplayChest();
         ChestService.Instance.UnlockNextChest(ChestView);
-    }
-
-    public void StartTimer()
-    {
-        
-        isStartTime = true;
-        ChestService.Instance.isChestTimerStarted = true;
-        while (ChestModel.unlockTime > 0)
-        {
-            ChestModel.unlockTime -= Time.deltaTime;
-            string value = TimeToString(ChestModel.unlockTime);
-            ChestView.UpdateTime(value);
-        }
-    }
-      
-    public string TimeToString(float value)
-    {
-        TimeSpan time = TimeSpan.FromSeconds(value);
-        string timeString = time.ToString(@"hh\:mm\:ss");
-        return timeString;
     }
 }

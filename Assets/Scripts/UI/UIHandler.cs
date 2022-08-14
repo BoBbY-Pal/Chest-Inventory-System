@@ -20,7 +20,6 @@ namespace UI
         {
             messageScreen.SetActive(false);
             OnUnlockUsingGem?.Invoke();
-            // ChestService.Instance.UnlockUsingGems();
         }
         
         public void OnTimerBtnClicked()
@@ -29,19 +28,15 @@ namespace UI
             
             if (ChestService.Instance.isChestTimerStarted)
             {
-                Debug.Log("entered ontimer btn clicked and chestimerstarted is true");
+                Debug.Log("Entered onTimer btn clicked and chesTimerStarted is true");
                 ChestService.Instance.AddChestToUnlockList();
             }
             else
             {
-                Debug.Log("entered ontimer btn clicked and chestimerstarted is false");
+                Debug.Log("Entered onTimer btn clicked and chesTimerStarted is false");
                 ChestService.Instance.UnlockChest();
             }
         }
-        
-        
-
-        
 
         public async void DisplayChestDetails(string chestType, string coinsRange, string gemsRange)
         {
@@ -74,8 +69,8 @@ namespace UI
             }
 
             headerTxt.text = header;
-            gemsBtnTxt.text = gems.ToString();
             messageTxt.text = msg;
+            gemsBtnTxt.text = gems.ToString();
 
             IsChestAdded(state);
         }
@@ -84,7 +79,7 @@ namespace UI
         {
             if (state == ChestState.Unlocking)
             {
-                timerBtnTxt.gameObject.SetActive(false);
+                timerBtn.gameObject.SetActive(false);
             }
             else
             {

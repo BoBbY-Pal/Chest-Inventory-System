@@ -359,9 +359,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _chestController: {fileID: 0}
-  isChestSprite: 0
-  chestTimerTxt: {fileID: 8501739234776688969}
-  unlockGemsTxt: {fileID: 0}
+  timerTxt: {fileID: 8501739234776688969}
   chestStatusTxt: {fileID: 8971467305017094159}
   chestTypeTxt: {fileID: 1349604245913033748}
   chestSpriteSlot: {fileID: 1349604245327917693}

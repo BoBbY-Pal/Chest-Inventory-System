@@ -1,4 +1,3 @@
-
 using System.Collections.Generic;
 using ScriptableObjects;
 using Singleton;
@@ -14,7 +13,6 @@ public class ChestService : MonoGenericSingleton<ChestService>
     [SerializeField] private ChestView chestPrefab;
     
     public GameObject chestSlotGroup;
-    private int chestSlotFull;
 
     [SerializeField] private ChestTypeSoList _chestTypeSoList;
     
@@ -73,7 +71,6 @@ public class ChestService : MonoGenericSingleton<ChestService>
     {
         chestUnlockingList.Add(chestToUnlock);
         chestToUnlock._chestController.ChangeState(ChestState.Unlocking);
-        chestToUnlock._chestController.StartTimer();
     }
 
     public void UnlockNextChest(ChestView chestView)
@@ -81,7 +78,8 @@ public class ChestService : MonoGenericSingleton<ChestService>
         chestUnlockingList.Remove(chestView);
         if (chestUnlockingList.Count > 0)
         {
-            chestUnlockingList[0]._chestController.StartTimer();
+       
+            chestUnlockingList[0]._chestController.ChangeState(ChestState.Unlocking);
         }
     }
 
