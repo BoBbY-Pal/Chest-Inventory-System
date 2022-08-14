@@ -1,4 +1,6 @@
-﻿using Singleton;
+﻿using System.Collections;
+using ScriptableObjects;
+using Singleton;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -11,6 +13,7 @@ namespace UI
         [SerializeField] private TextMeshProUGUI messageTxt;
         [SerializeField] private Button timerBtn;
         [SerializeField] private Button gemsBtn;
+        [SerializeField] private TextMeshProUGUI header;
         [SerializeField] private TextMeshProUGUI timerBtnTxt;
         [SerializeField] private TextMeshProUGUI gemsBtnTxt;
 
@@ -19,7 +22,7 @@ namespace UI
             messageScreen.SetActive(false);
             ChestService.Instance.UnlockUsingGems();
         }
-
+        
         public void OnTimerBtnClicked()
         {
             messageScreen.SetActive(false);
@@ -36,6 +39,9 @@ namespace UI
         public void DisplayMessageWithButton(string msg, int gems, ChestState state)
         {
             messageScreen.SetActive(true);
+            timerBtn.gameObject.SetActive(true);
+            gemsBtn.gameObject.SetActive(true);
+            
             string message;
             if (ChestService.Instance.isChestTimerStarted && ChestService.Instance.noOfChestCanUnlock > 1)
             {
@@ -68,6 +74,19 @@ namespace UI
             gemsBtn.gameObject.SetActive(true);
         }
 
+        public async void DisplayChestDetails(string chestType, string coinsRange, string gemsRange)
+        {
+            messageScreen.SetActive(true);
+            timerBtn.gameObject.SetActive(false);
+            gemsBtn.gameObject.SetActive(false);
+            header.text = "New Chest!";
+            messageTxt.text = $"You got a {chestType} chest.\nCoins: {coinsRange}\nGems: {gemsRange}";
+
+            await new WaitForSeconds(3f);
+            messageScreen.SetActive(false);
+        }
+        
+        
         public void DisplayMessage(string msg)
         {
             messageScreen.SetActive(true);

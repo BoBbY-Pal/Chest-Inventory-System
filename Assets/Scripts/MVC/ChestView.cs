@@ -62,7 +62,7 @@ public class ChestView : MonoBehaviour
         chestTypeTxt.text = _chestController.ChestModel.ChestType.ToString();
         chestStatusTxt.text = _chestController.GetState.ToString();
 
-        if (_chestController.GetState == ChestState.Locked )
+        if (_chestController.GetState == ChestState.Locked || _chestController.GetState == ChestState.Unlocking)
         {
             chestSpriteSlot.sprite = _chestController.ChestModel.lockedChestSprite;
         }
@@ -91,6 +91,7 @@ public class ChestView : MonoBehaviour
 
     public void DestroyChest()
     {
-        Destroy(this);
+        Destroy(gameObject);
+        ChestService.Instance.chestCounter--;
     }
 }

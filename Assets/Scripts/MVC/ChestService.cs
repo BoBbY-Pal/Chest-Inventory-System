@@ -24,12 +24,13 @@ public class ChestService : MonoGenericSingleton<ChestService>
     private List<ChestView> chestUnlockingList;
     [SerializeField] private Button claimChestBtn;
 
-    private int chestCounter;
+    public int chestCounter;
     public bool isChestTimerStarted { get; set; }
 
     protected override void Awake()
     {
         base.Awake();
+        chestUnlockingList = new List<ChestView>();
         claimChestBtn.onClick.AddListener(SpawnChest);
         
     }
