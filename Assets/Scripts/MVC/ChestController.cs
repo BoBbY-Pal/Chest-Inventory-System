@@ -1,3 +1,4 @@
+using System;
 using DefaultNamespace;
 using UI;
 using UnityEngine;
@@ -29,11 +30,12 @@ public class ChestController : MonoBehaviour
         ChestView.Initialize(this);
         ChangeState(ChestState.Locked);
         UIHandler.Instance.DisplayChestDetails(ChestModel.ChestType.ToString(), ChestModel.coinsRange, ChestModel.gemsRange);
+        ChestView.OnChestButtonPressed += ChestBtnPressed;
     }
 
     public void StartUnlocking()
     {
-        ChestView.ShowUnlockGems(ChestModel.GemsRequiredToUnlock);
+        
         ChestView.ShowUnlockTime(ChestModel.unlockTime);
         if (ChestModel.unlockTime <= 0)
         {
@@ -41,23 +43,35 @@ public class ChestController : MonoBehaviour
         }
     }
 
-    public void ChestBtnPressed()
+    private void ChestBtnPressed()
     {
         string msg;
+        string header;
         
         if (CheckState(ChestState.Locked))
         {
-            msg = "Unlock this chest";
+            msg = "Please select how you want to open the chest";
+            header = "Unlock Chest!";
             ChestService.Instance.SetChestView(ChestView);
-            UIHandler.Instance.DisplayMessageWithButton(msg, ChestModel.GemsRequiredToUnlock, ChestState.Unlocking);
+            UIHandler.Instance.DisplayMessageWithButton(header, msg, ChestModel.GemsRequiredToUnlock, ChestState.Unlocking);
         }
         else
         {
+            
             PlayerInventory.Instance.UpdatePlayerInventory(ChestModel.coins, ChestModel.gems);
             msg = $"{ChestModel.coins} coins and {ChestModel.gems} gems added to the inventory!";
-            UIHandler.Instance.DisplayMessage(msg);
+            header = "Congratulations!";
+            UIHandler.Instance.DisplayMessage(header, msg);
+            ChestView.OnChestButtonPressed -= ChestBtnPressed;
             ChestView.DestroyChest();
         }
+    }
+    
+    public string TimeToString()
+    {
+        TimeSpan time = TimeSpan.FromSeconds(ChestModel.unlockTime);
+        string timeString = time.ToString(@"hh\:mm\:ss");
+        return timeString;
     }
     
     public void UnlockUsingGems()
@@ -70,7 +84,8 @@ public class ChestController : MonoBehaviour
         else
         {
             string msg = "You Don't have enough gems!";
-            UIHandler.Instance.DisplayMessage(msg);
+            string header = "Oops!";
+            UIHandler.Instance.DisplayMessage(header, msg);
         }
     }
 
@@ -84,14 +99,14 @@ public class ChestController : MonoBehaviour
         ChestService.Instance.UnlockNextChest(ChestView);
     }
 
-    public async void StartTime()
+    public void StartTimer()
     {
+        
         isStartTime = true;
         ChestService.Instance.isChestTimerStarted = true;
         while (ChestModel.unlockTime > 0)
         {
-            await new WaitForSeconds(1f);
-            ChestModel.unlockTime -= 1;
+            ChestModel.unlockTime -= Time.deltaTime;
         }
     }
 }

@@ -1,3 +1,4 @@
+using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -6,23 +7,17 @@ public class ChestView : MonoBehaviour
 {
     public ChestController _chestController;
 
-    
-    public bool isChestSprite;
-    // public Image chestSprite;
-    
     [SerializeField] private TextMeshProUGUI chestTimerTxt;
-    [SerializeField] private Text unlockGemsTxt;
     [SerializeField] private TextMeshProUGUI chestStatusTxt;
     [SerializeField] private TextMeshProUGUI chestTypeTxt;
     [SerializeField] private Image chestSpriteSlot;
 
-   
+    public static event Action OnChestButtonPressed;
 
     void Start()
     {
         SetParent();
         DisplayChest();
-        // _chestController.SetupEmptyChest();
     }
 
     void Update()
@@ -48,17 +43,15 @@ public class ChestView : MonoBehaviour
     {
         _chestController = chestController;
         Debug.Log("Controller initialized");
+        
+        
     }
 
     public void DisplayChest()
     {
-        // if (_chestController.ChestModel.unlockTime <= 0)
-        // {
-        //     _chestController.ChestModel.unlockTime = 0;
-        // }
         
-        chestTimerTxt.text = _chestController.ChestModel.unlockTime.ToString();
-        unlockGemsTxt.text = _chestController.ChestModel.GemsRequiredToUnlock.ToString();
+
+        chestTimerTxt.text = _chestController.TimeToString();
         chestTypeTxt.text = _chestController.ChestModel.ChestType.ToString();
         chestStatusTxt.text = _chestController.GetState.ToString();
 
@@ -68,26 +61,21 @@ public class ChestView : MonoBehaviour
         }
         else
         {
-            isChestSprite = true;
             chestSpriteSlot.sprite = _chestController.ChestModel.unlockedChestSprite;
         }
 
     }
 
-    public void OnChestBtnPressed()
+    public void ChestButtonPressed()
     {
-        _chestController.ChestBtnPressed();
+        OnChestButtonPressed?.Invoke();
     }
 
-    public void ShowUnlockTime(int time)
+    public void ShowUnlockTime(float time)
     {
         chestTimerTxt.text = time.ToString();
     }
-
-    public void ShowUnlockGems(int gems)
-    {
-        unlockGemsTxt.text = gems.ToString();
-    }
+    
 
     public void DestroyChest()
     {

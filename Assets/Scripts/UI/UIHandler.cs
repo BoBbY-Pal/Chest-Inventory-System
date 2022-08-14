@@ -13,7 +13,7 @@ namespace UI
         [SerializeField] private TextMeshProUGUI messageTxt;
         [SerializeField] private Button timerBtn;
         [SerializeField] private Button gemsBtn;
-        [SerializeField] private TextMeshProUGUI header;
+        [SerializeField] private TextMeshProUGUI headerTxt;
         [SerializeField] private TextMeshProUGUI timerBtnTxt;
         [SerializeField] private TextMeshProUGUI gemsBtnTxt;
 
@@ -36,7 +36,23 @@ namespace UI
             }
         }
         
-        public void DisplayMessageWithButton(string msg, int gems, ChestState state)
+        
+
+        
+
+        public async void DisplayChestDetails(string chestType, string coinsRange, string gemsRange)
+        {
+            messageScreen.SetActive(true);
+            timerBtn.gameObject.SetActive(false);
+            gemsBtn.gameObject.SetActive(false);
+            headerTxt.text = "New Chest!";
+            messageTxt.text = $"You got a {chestType} chest.\nCoins: {coinsRange}\nGems: {gemsRange}";
+
+            await new WaitForSeconds(3f);
+            messageScreen.SetActive(false);
+        }
+        
+        public void DisplayMessageWithButton(string header, string msg, int gems, ChestState state)
         {
             messageScreen.SetActive(true);
             timerBtn.gameObject.SetActive(true);
@@ -54,12 +70,13 @@ namespace UI
                 timerBtnTxt.text = message;
             }
 
+            headerTxt.text = header;
             gemsBtnTxt.text = gems.ToString();
             messageTxt.text = msg;
 
             IsChestAdded(state);
         }
-
+        
         private void IsChestAdded(ChestState state)
         {
             if (state == ChestState.Unlocking)
@@ -73,23 +90,11 @@ namespace UI
             
             gemsBtn.gameObject.SetActive(true);
         }
-
-        public async void DisplayChestDetails(string chestType, string coinsRange, string gemsRange)
+        
+        public void DisplayMessage(string header, string msg)
         {
             messageScreen.SetActive(true);
-            timerBtn.gameObject.SetActive(false);
-            gemsBtn.gameObject.SetActive(false);
-            header.text = "New Chest!";
-            messageTxt.text = $"You got a {chestType} chest.\nCoins: {coinsRange}\nGems: {gemsRange}";
-
-            await new WaitForSeconds(3f);
-            messageScreen.SetActive(false);
-        }
-        
-        
-        public void DisplayMessage(string msg)
-        {
-            messageScreen.SetActive(true);
+            headerTxt.text = header;
             messageTxt.text = msg;
             timerBtn.gameObject.SetActive(false);
             gemsBtn.gameObject.SetActive(false);
