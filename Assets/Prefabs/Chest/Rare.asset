@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 0}
+  m_Name: Rare
+  m_EditorClassIdentifier: Assembly-CSharp:ScriptableObjects:ChestTypeSo
+  chestType: 4
+  unlockTime: 10
+  gemsRequiredToUnlock: 50
+  coinRange:
+    min: 100
+    max: 500
+  gemRange:
+    min: 10
+    max: 50
+  lockedChestSprite: {fileID: 21300000, guid: 971d89230f9f69a49ad2bd17f5d45f89, type: 3}
+  unlockedChestSprite: {fileID: 21300000, guid: 3330b2e638a405246b70d6cb3542937a, type: 3}

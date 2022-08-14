@@ -4,19 +4,23 @@ using UnityEngine;
 
 public class ChestModel
 {
-    private ChestController _chestController;
+    public ChestTypes ChestType { get;}
+    public int coins { get; set; }
+    public int gems { get;   }
+    public int unlockTime { get; set; }
+    public int GemsRequiredToUnlock { get; set; }
     
-    public ChestTypes ChestType { get; private set; }
-    public int coins { get; private set; }
-    public int gems { get; private set; }
-    public int unlockTime { get; private set; }
+    public Sprite lockedChestSprite { get; }
+    public Sprite unlockedChestSprite { get; }
 
-    public ChestModel(ChestSO chestSo, ChestController chestController)
+    public ChestModel(ChestTypeSo chestTypeSo)
     {
-        _chestController = chestController;
-        ChestType = chestSo.chestType;
-        unlockTime = chestSo.unlockTime;
-        coins = Random.Range(chestSo.minCoins, chestSo.maxCoins);
-        gems = Random.Range(chestSo.minGems, chestSo.maxGems);
+        unlockedChestSprite = chestTypeSo.unlockedChestSprite;
+        lockedChestSprite = chestTypeSo.lockedChestSprite;
+        ChestType = chestTypeSo.chestType;
+        unlockTime = chestTypeSo.unlockTime;
+        GemsRequiredToUnlock = chestTypeSo.gemsRequiredToUnlock;
+        coins = Random.Range(chestTypeSo.coinRange.min, chestTypeSo.coinRange.max);
+        gems = Random.Range(chestTypeSo.gemRange.min, chestTypeSo.gemRange.max);
     }
 }

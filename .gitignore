@@ -28,9 +28,9 @@
 /[Aa]ssets/Plugins/Editor/JetBrains*
 
 #Jetbrain Rider Cache
-.idea/
+*.idea/
 
-#Jetbrain Rider Cache
+#VSCode Cache
 .vscode/
 
 # Visual Studio cache directory

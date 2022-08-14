@@ -1,13 +1,121 @@
-using System.Collections;
+
 using System.Collections.Generic;
+using ScriptableObjects;
 using Singleton;
+
 using UnityEngine;
+
+using Button = UnityEngine.UI.Button;
+
 
 public class ChestService : MonoGenericSingleton<ChestService>
 {
-    private ChestController[] chestSlots;
-    private ChestView chestToUnlock;
-
+    private ChestController[] chests;
+    [SerializeField] private ChestView chestPrefab;
+    
     public GameObject chestSlotGroup;
+    private int chestSlotFull;
+
+    [SerializeField] private ChestTypeSoList _chestTypeSoList;
+    
+    [SerializeField] private int noOfChests;
     public int noOfChestCanUnlock;
+    private ChestView chestToUnlock;
+    private List<ChestView> chestUnlockingList;
+    [SerializeField] private Button claimChestBtn;
+
+    private int chestCounter;
+    public bool isChestTimerStarted { get; set; }
+
+    protected override void Awake()
+    {
+        base.Awake();
+        claimChestBtn.onClick.AddListener(SpawnChest);
+        
+    }
+    
+    private void Start()
+    {
+        
+        
+    }
+
+
+    private void SpawnChest()
+    {
+        chests = new ChestController[noOfChests];
+        int randomNum = Random.Range(0, _chestTypeSoList.chestsTypeList.Length);
+        
+        
+        if (chestCounter < chests.Length)
+        {
+            Debug.Log(chestCounter);
+            chests[chestCounter] = CreateChest(_chestTypeSoList.chestsTypeList[randomNum]);
+            chestCounter++;
+        }
+        else
+        {
+            string msg = "Chest slots are full";
+            Debug.Log(msg);
+            // UIHandler.Instance.DisplayMsg(msg);
+        }
+        
+    }
+    private ChestController CreateChest(ChestTypeSo chestTypeSo)
+    {
+        
+        ChestModel chestModel = new ChestModel(chestTypeSo);
+        ChestController chestController = new ChestController(chestModel, chestPrefab);
+        return chestController;
+    }
+
+    // public void CreateAndAddChest()
+    // {
+    //     int randomNum = Random.Range(0, _chestTypeSoList.chestsTypeList.Length);
+    //     chestSlotFull = 0;
+    //     for (int i = 0; i < chests.Length; i++)
+    //     {
+    //         if (chests[i].isEmpty)
+    //         {
+    //             chests[i].AddChest(_chestTypeSoList.chestsTypeList[randomNum]);
+    //             i = chests.Length + 1;
+    //         }
+    //         else
+    //         {
+    //             chestSlotFull++;
+    //         }
+    //     }
+    //
+    //     if (chestSlotFull == chests.Length)
+    //     {
+    //         string msg = "Chest slots are full";
+    //         // UIHandler.Instance.DisplayMsg(msg);
+    //     }
+    // }
+
+    public void SetChestView(ChestView view)
+    {
+        chestToUnlock = view;
+    }
+
+    public void UnlockChest()
+    {
+        chestUnlockingList.Add(chestToUnlock);
+        chestToUnlock._chestController.ChangeState(ChestState.Unlocking);
+        chestToUnlock._chestController.StartTime();
+    }
+
+    public void UnlockUsingGems()
+    {
+        chestToUnlock._chestController.UnlockUsingGems();
+    }
+
+    public void UnlockNextChest(ChestView chestView)
+    {
+        chestUnlockingList.Remove(chestView);
+        if (chestUnlockingList.Count > 0)
+        {
+            chestUnlockingList[0]._chestController.StartTime();
+        }
+    }
 }
