@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Legendary
   m_EditorClassIdentifier: Assembly-CSharp:ScriptableObjects:ChestTypeSo
   chestType: 3
-  unlockTime: 8
+  unlockTime: 50
   gemsRequiredToUnlock: 30
   coinRange:
     min: 100

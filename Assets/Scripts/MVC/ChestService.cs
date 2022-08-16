@@ -50,7 +50,7 @@ public class ChestService : MonoGenericSingleton<ChestService>
             string msg = "All chest slots are full";
             string header = "No More Space!";
             Debug.Log(msg);
-            UIHandler.Instance.DisplayMessage(header, msg);
+            PopUpManager.Instance.DisplayMessage(header, msg);
         }
         
     }
@@ -91,13 +91,13 @@ public class ChestService : MonoGenericSingleton<ChestService>
         {
             header = "No More Space!";
             msg = "Can't unlock more chest!";
-            UIHandler.Instance.DisplayMessage(header, msg);
+            PopUpManager.Instance.DisplayMessage(header, msg);
         }
         else
         {
             header = "Unlock Chest!";
             msg = "Chest added to the list!";
-            UIHandler.Instance.DisplayMessage(header, msg);
+            PopUpManager.Instance.DisplayMessage(header, msg);
             chestUnlockingList.Add(chestToUnlock);
             chestToUnlock._chestController.ChangeState(ChestState.Unlocking);
         }

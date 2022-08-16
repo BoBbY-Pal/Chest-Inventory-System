@@ -6,14 +6,14 @@ using UnityEngine.UI;
 public class ChestView : MonoBehaviour
 {
     public ChestController _chestController;
+    private float _time;
 
     [SerializeField] private TextMeshProUGUI timerTxt;
     [SerializeField] private TextMeshProUGUI chestStatusTxt;
     [SerializeField] private TextMeshProUGUI chestTypeTxt;
     [SerializeField] private Image chestSpriteSlot;
+    public event Action OnChestButtonPressed;
 
-    private float _time;
-    public static event Action OnChestButtonPressed;
 
     void Start()
     {
@@ -32,29 +32,9 @@ public class ChestView : MonoBehaviour
                 _chestController.ChangeState(ChestState.Unlocked);
                 _chestController.StartUnlocking();
             }
-
         }
-        
-        // if (_chestController.isStartTime)
-        // {
-        //     _chestController.StartUnlocking();
-        // }
     }
-
-    private void DecreaseTimer()
-    {
-        _time -= Time.deltaTime;
-        timerTxt.text = TimeToString(_time);
-    }
-
-    private string TimeToString(float value)
-    {
-        TimeSpan time = TimeSpan.FromSeconds(value);
-        string timeString = time.ToString(@"hh\:mm\:ss");
-        return timeString;
-    }
-
-    private bool IsTimeOver() => _time <= 0;
+    
     private void SetParent()
     {
         transform.SetParent(ChestService.Instance.chestSlotGroup.transform);
@@ -84,6 +64,21 @@ public class ChestView : MonoBehaviour
 
     }
 
+    private void DecreaseTimer()
+    {
+        _time -= Time.deltaTime;
+        timerTxt.text = TimeToString(_time);
+    }
+
+    private string TimeToString(float value)
+    {
+        TimeSpan time = TimeSpan.FromSeconds(value);
+        string timeString = time.ToString(@"hh\:mm\:ss");
+        return timeString;
+    }
+
+    private bool IsTimeOver() => _time <= 0;
+    
     public void ChestButtonPressed()
     {
         OnChestButtonPressed?.Invoke();

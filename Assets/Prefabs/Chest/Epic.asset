@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Epic
   m_EditorClassIdentifier: Assembly-CSharp:ScriptableObjects:ChestTypeSo
   chestType: 2
-  unlockTime: 8
+  unlockTime: 30
   gemsRequiredToUnlock: 20
   coinRange:
     min: 100

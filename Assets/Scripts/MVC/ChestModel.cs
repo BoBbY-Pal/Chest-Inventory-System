@@ -1,10 +1,11 @@
 using Enums;
 using ScriptableObjects;
 using UnityEngine;
+    
 
 public class ChestModel
 {
-    public ChestTypes ChestType { get;}
+    public ChestTypes ChestType { get; }
     public int coins { get; set; }
     public string coinsRange { get; }
     public int gems { get;   }

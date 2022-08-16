@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: Rare
   m_EditorClassIdentifier: Assembly-CSharp:ScriptableObjects:ChestTypeSo
   chestType: 4
-  unlockTime: 10
-  gemsRequiredToUnlock: 50
+  unlockTime: 80
+  gemsRequiredToUnlock: 40
   coinRange:
     min: 100
     max: 500

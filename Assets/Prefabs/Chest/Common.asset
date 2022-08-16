@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Common
   m_EditorClassIdentifier: Assembly-CSharp:ScriptableObjects:ChestTypeSo
   chestType: 1
-  unlockTime: 5
+  unlockTime: 15
   gemsRequiredToUnlock: 10
   coinRange:
     min: 100

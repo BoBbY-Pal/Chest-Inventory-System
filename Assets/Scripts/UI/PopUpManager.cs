@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 namespace UI
 {
-    public class UIHandler: MonoGenericSingleton<UIHandler>
+    public class PopUpManager: MonoGenericSingleton<PopUpManager>
     {
         [SerializeField] private GameObject messageScreen;
         [SerializeField] private TextMeshProUGUI messageTxt;
@@ -15,7 +15,7 @@ namespace UI
         [SerializeField] private TextMeshProUGUI timerBtnTxt;
         [SerializeField] private TextMeshProUGUI gemsBtnTxt;
 
-        public static event System.Action OnUnlockUsingGem;
+        public event System.Action OnUnlockUsingGem;
         public void OnGemsBtnClicked()
         {
             messageScreen.SetActive(false);
@@ -50,6 +50,7 @@ namespace UI
             messageScreen.SetActive(false);
         }
         
+        // Pop message with option buttons.
         public void DisplayMessageWithButton(string header, string msg, int gems, ChestState state)
         {
             messageScreen.SetActive(true);
@@ -77,18 +78,13 @@ namespace UI
         
         private void IsChestAdded(ChestState state)
         {
-            if (state == ChestState.Unlocking)
-            {
-                timerBtn.gameObject.SetActive(false);
-            }
-            else
-            {
-                timerBtn.gameObject.SetActive(true);
-            }
-            
+            // If it's already in unlocking state that means timer is running.
+            // That mean we wouldn't show "Start Timer" button.
+            timerBtn.gameObject.SetActive(state != ChestState.Unlocking);    
             gemsBtn.gameObject.SetActive(true);
         }
         
+        // Pop message without option buttons. Just a popUp message.
         public void DisplayMessage(string header, string msg)
         {
             messageScreen.SetActive(true);
