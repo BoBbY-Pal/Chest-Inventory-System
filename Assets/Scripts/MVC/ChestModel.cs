@@ -11,7 +11,7 @@ public class ChestModel
     public int gems { get;   }
     public string gemsRange { get; }
     
-    public float unlockTime { get; }
+    public float unlockTime { get; set; }
     public int GemsRequiredToUnlock { get; set; }
     
     public Sprite lockedChestSprite { get; }

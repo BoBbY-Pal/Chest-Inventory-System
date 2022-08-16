@@ -2617,8 +2617,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5c9100ae23e7435c95b0b5a760db6bee, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  coins: 10
-  gems: 10
+  coins: 25
+  gems: 100
   coinTxt: {fileID: 408489194}
   gemsTxt: {fileID: 530161311}
 --- !u!1 &1797604906

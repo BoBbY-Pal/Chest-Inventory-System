@@ -27,7 +27,7 @@ public class ChestController
         ChestView.Initialize(this, ChestModel.unlockTime);
         ChangeState(ChestState.Locked);
         PopUpManager.Instance.DisplayChestDetails(ChestModel.ChestType.ToString(), ChestModel.coinsRange, ChestModel.gemsRange);
-        ChestView.DisplayChest(ChestModel.ChestType, ChestModel.lockedChestSprite, ChestModel.unlockedChestSprite);
+        ChestView.DisplayChest(ChestModel.unlockTime, ChestModel.ChestType, ChestModel.lockedChestSprite, ChestModel.unlockedChestSprite);
         SubscribeEvents();
     }
 
@@ -93,9 +93,10 @@ public class ChestController
     public void ChestUnlocked()
     {
         ChangeState(ChestState.Unlocked);
+        ChestModel.unlockTime = 0;
         ChestModel.GemsRequiredToUnlock = 0;
         ChestService.Instance.isChestTimerRunning = false;
-        ChestView.DisplayChest(ChestModel.ChestType, ChestModel.lockedChestSprite, ChestModel.unlockedChestSprite);
+        ChestView.DisplayChest(ChestModel.unlockTime, ChestModel.ChestType, ChestModel.lockedChestSprite, ChestModel.unlockedChestSprite);
         ChestService.Instance.UnlockNextChest(ChestView);
     }
 }

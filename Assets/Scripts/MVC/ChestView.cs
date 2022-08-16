@@ -47,8 +47,9 @@ public class ChestView : MonoBehaviour
         GameLogsManager.CustomLog("Controller initialized");
     }
 
-    public void DisplayChest(ChestTypes chestType, Sprite lockedChestSprite, Sprite unlockedChestSprite)
+    public void DisplayChest(float chestTime, ChestTypes chestType, Sprite lockedChestSprite, Sprite unlockedChestSprite)
     {
+        time = chestTime;
         timerTxt.text = TimeToString(time);
         chestTypeTxt.text = chestType.ToString();
         chestStatusTxt.text = chestController.GetCurrentState.ToString();
