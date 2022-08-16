@@ -14,27 +14,28 @@ namespace UI
         [SerializeField] private TextMeshProUGUI headerTxt;
         [SerializeField] private TextMeshProUGUI timerBtnTxt;
         [SerializeField] private TextMeshProUGUI gemsBtnTxt;
-
-        public event System.Action OnUnlockUsingGem;
+        
         public void OnGemsBtnClicked()
         {
+            SoundManager.Instance.Play(SoundTypes.ButtonPressed);
             messageScreen.SetActive(false);
-            // OnUnlockUsingGem?.Invoke();
+            
             ChestService.Instance.OpenChestWithGem();
         }
         
         public void OnTimerBtnClicked()
         {
+            SoundManager.Instance.Play(SoundTypes.ButtonPressed);
             messageScreen.SetActive(false);
             
             if (ChestService.Instance.isChestTimerRunning)
             {
-                Debug.Log("Entered onTimer btn clicked and chesTimerStarted is true");
+                GameLogsManager.CustomLog("Entered onTimer btn clicked and ChesTimerStarted is true");
                 ChestService.Instance.AddChestToUnlockList();
             }
             else
             {
-                Debug.Log("Entered onTimer btn clicked and chesTimerStarted is false");
+                GameLogsManager.CustomLog("Entered onTimer btn clicked and chesTimerStarted is false");
                 ChestService.Instance.UnlockChest();
             }
         }

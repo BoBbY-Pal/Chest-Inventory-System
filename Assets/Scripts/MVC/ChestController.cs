@@ -43,6 +43,8 @@ public class ChestController
 
     private void ChestBtnPressed()
     {
+        SoundManager.Instance.Play(SoundTypes.ButtonPressed);
+        
         string msg;
         string header;
         

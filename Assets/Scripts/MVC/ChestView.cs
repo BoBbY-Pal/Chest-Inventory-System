@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 public class ChestView : MonoBehaviour
 {
-    public ChestController _chestController;
+    public ChestController chestController;
     private float time;
 
     [SerializeField] private TextMeshProUGUI timerTxt;
@@ -23,14 +23,14 @@ public class ChestView : MonoBehaviour
 
     void Update()
     {
-        if (_chestController.GetCurrentState == ChestState.Unlocking)
+        if (chestController.GetCurrentState == ChestState.Unlocking)
         {
             DecreaseTimer();
-            chestStatusTxt.text = _chestController.GetCurrentState.ToString();
+            chestStatusTxt.text = chestController.GetCurrentState.ToString();
             if (IsTimeOver())
             {
                 timerTxt.text = "READY";
-                _chestController.ChestUnlocked();
+                chestController.ChestUnlocked();
             }
         }
     }
@@ -42,18 +42,18 @@ public class ChestView : MonoBehaviour
 
     public void Initialize(ChestController chestController, float time)
     {
-        _chestController = chestController;
+        this.chestController = chestController;
         this.time = time;
-        Debug.Log("Controller initialized");
+        GameLogsManager.CustomLog("Controller initialized");
     }
 
     public void DisplayChest(ChestTypes chestType, Sprite lockedChestSprite, Sprite unlockedChestSprite)
     {
         timerTxt.text = TimeToString(time);
         chestTypeTxt.text = chestType.ToString();
-        chestStatusTxt.text = _chestController.GetCurrentState.ToString();
+        chestStatusTxt.text = chestController.GetCurrentState.ToString();
 
-        if (_chestController.GetCurrentState == ChestState.Locked || _chestController.GetCurrentState == ChestState.Unlocking)
+        if (chestController.GetCurrentState == ChestState.Locked || chestController.GetCurrentState == ChestState.Unlocking)
         {
             chestSpriteSlot.sprite = lockedChestSprite;
         }

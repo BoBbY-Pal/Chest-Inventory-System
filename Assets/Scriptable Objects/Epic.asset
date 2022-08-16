@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 0}
+  m_Name: Epic
+  m_EditorClassIdentifier: Assembly-CSharp:ScriptableObjects:ChestTypeSo
+  chestType: 2
+  unlockTime: 30
+  gemsRequiredToUnlock: 20
+  coinRange:
+    min: 100
+    max: 300
+  gemRange:
+    min: 10
+    max: 40
+  lockedChestSprite: {fileID: 21300000, guid: dd94851f95b5c744eab471b7ff2a22bf, type: 3}
+  unlockedChestSprite: {fileID: 21300000, guid: f8f3bdf7d68008d4cb353d2970bfbb12, type: 3}
