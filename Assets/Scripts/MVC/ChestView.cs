@@ -1,41 +1,37 @@
+using System;
+using Enums;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class ChestView : MonoBehaviour
 {
-    public ChestController _chestController;
+    public ChestController chestController;
+    private float time;
 
-    
-    public bool isChestSprite;
-    // public Image chestSprite;
-    
-    [SerializeField] private TextMeshProUGUI chestTimerTxt;
-    [SerializeField] private Text unlockGemsTxt;
+    [SerializeField] private TextMeshProUGUI timerTxt;
     [SerializeField] private TextMeshProUGUI chestStatusTxt;
     [SerializeField] private TextMeshProUGUI chestTypeTxt;
     [SerializeField] private Image chestSpriteSlot;
+    public event Action OnChestButtonPressed;
 
-   
 
     void Start()
     {
         SetParent();
-        DisplayChest();
-        // _chestController.SetupEmptyChest();
     }
 
     void Update()
     {
-        // if (_chestController.GetState == ChestState.Unlocking)
-        // {
-        //     DecreaseTimer()
-        //         
-        // }
-        
-        if (_chestController.isStartTime)
+        if (chestController.GetCurrentState == ChestState.Unlocking)
         {
-            _chestController.StartUnlocking();
+            DecreaseTimer();
+            chestStatusTxt.text = chestController.GetCurrentState.ToString();
+            if (IsTimeOver())
+            {
+                timerTxt.text = "READY";
+                chestController.ChestUnlocked();
+            }
         }
     }
     
@@ -44,49 +40,49 @@ public class ChestView : MonoBehaviour
         transform.SetParent(ChestService.Instance.chestSlotGroup.transform);
     }
 
-    public void Initialize(ChestController chestController)
+    public void Initialize(ChestController chestController, float time)
     {
-        _chestController = chestController;
-        Debug.Log("Controller initialized");
+        this.chestController = chestController;
+        this.time = time;
+        GameLogsManager.CustomLog("Controller initialized");
     }
 
-    public void DisplayChest()
+    public void DisplayChest(float chestTime, ChestTypes chestType, Sprite lockedChestSprite, Sprite unlockedChestSprite)
     {
-        // if (_chestController.ChestModel.unlockTime <= 0)
-        // {
-        //     _chestController.ChestModel.unlockTime = 0;
-        // }
-        
-        chestTimerTxt.text = _chestController.ChestModel.unlockTime.ToString();
-        unlockGemsTxt.text = _chestController.ChestModel.GemsRequiredToUnlock.ToString();
-        chestTypeTxt.text = _chestController.ChestModel.ChestType.ToString();
-        chestStatusTxt.text = _chestController.GetState.ToString();
+        time = chestTime;
+        timerTxt.text = TimeToString(time);
+        chestTypeTxt.text = chestType.ToString();
+        chestStatusTxt.text = chestController.GetCurrentState.ToString();
 
-        if (_chestController.GetState == ChestState.Locked || _chestController.GetState == ChestState.Unlocking)
+        if (chestController.GetCurrentState == ChestState.Locked || chestController.GetCurrentState == ChestState.Unlocking)
         {
-            chestSpriteSlot.sprite = _chestController.ChestModel.lockedChestSprite;
+            chestSpriteSlot.sprite = lockedChestSprite;
         }
         else
         {
-            isChestSprite = true;
-            chestSpriteSlot.sprite = _chestController.ChestModel.unlockedChestSprite;
+            chestSpriteSlot.sprite = unlockedChestSprite;
         }
 
     }
 
-    public void OnChestBtnPressed()
+    private void DecreaseTimer()
     {
-        _chestController.ChestBtnPressed();
+        time -= Time.deltaTime;
+        timerTxt.text = TimeToString(time);
     }
 
-    public void ShowUnlockTime(int time)
+    private string TimeToString(float value)
     {
-        chestTimerTxt.text = time.ToString();
+        TimeSpan time = TimeSpan.FromSeconds(value);
+        string timeString = time.ToString(@"hh\:mm\:ss");
+        return timeString;
     }
 
-    public void ShowUnlockGems(int gems)
+    private bool IsTimeOver() => time <= 0;
+    
+    public void ChestButtonPressed()
     {
-        unlockGemsTxt.text = gems.ToString();
+        OnChestButtonPressed?.Invoke();
     }
 
     public void DestroyChest()

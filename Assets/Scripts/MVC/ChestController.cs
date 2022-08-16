@@ -1,4 +1,3 @@
-using DefaultNamespace;
 using UI;
 using UnityEngine;
 
@@ -8,90 +7,96 @@ public enum ChestState
     Unlocking,
     Unlocked
 }
-public class ChestController : MonoBehaviour
+
+public class ChestController
 {
-    public ChestModel ChestModel { get; }
+    private ChestModel ChestModel { get; }
     private ChestView ChestView { get; }
 
-    private ChestState _state;
+    private ChestState currentState;
 
-    public ChestState GetState => _state;
-    public void ChangeState(ChestState chestState) => _state = chestState;
-    public bool CheckState(ChestState chestState) => _state == chestState;
+    public ChestState GetCurrentState => currentState;
+    public void ChangeState(ChestState chestState) => currentState = chestState;
 
-    public bool isStartTime;
-   
 
-    public ChestController(ChestModel chestModel, ChestView view)
+    public ChestController(ChestModel model, ChestView view)
     {
-        ChestModel = chestModel;
-        ChestView = GameObject.Instantiate<ChestView>(view);
-        ChestView.Initialize(this);
-        ChangeState(ChestState.Locked);
-        UIHandler.Instance.DisplayChestDetails(ChestModel.ChestType.ToString(), ChestModel.coinsRange, ChestModel.gemsRange);
-    }
-
-    public void StartUnlocking()
-    {
-        ChestView.ShowUnlockGems(ChestModel.GemsRequiredToUnlock);
-        ChestView.ShowUnlockTime(ChestModel.unlockTime);
-        if (ChestModel.unlockTime <= 0)
-        {
-            ChestUnlocked();
-        }
-    }
-
-    public void ChestBtnPressed()
-    {
-        string msg;
+        ChestModel = model;
+        ChestView = Object.Instantiate(view);
         
-        if (CheckState(ChestState.Locked))
+        ChestView.Initialize(this, ChestModel.unlockTime);
+        ChangeState(ChestState.Locked);
+        PopUpManager.Instance.DisplayChestDetails(ChestModel.ChestType.ToString(), ChestModel.coinsRange, ChestModel.gemsRange);
+        ChestView.DisplayChest(ChestModel.unlockTime, ChestModel.ChestType, ChestModel.lockedChestSprite, ChestModel.unlockedChestSprite);
+        SubscribeEvents();
+    }
+
+    private void SubscribeEvents()
+    {
+        ChestView.OnChestButtonPressed += ChestBtnPressed;
+    }
+
+    private void UnSubscribeEvents()
+    {
+        ChestView.OnChestButtonPressed -= ChestBtnPressed;
+    }
+
+    private void ChestBtnPressed()
+    {
+        SoundManager.Instance.Play(SoundTypes.ButtonPressed);
+        
+        string msg;
+        string header;
+        
+        switch (GetCurrentState)
         {
-            msg = "Unlock this chest";
-            ChestService.Instance.SetChestView(ChestView);
-            UIHandler.Instance.DisplayMessageWithButton(msg, ChestModel.GemsRequiredToUnlock, ChestState.Unlocking);
-        }
-        else
-        {
-            PlayerInventory.Instance.UpdatePlayerInventory(ChestModel.coins, ChestModel.gems);
-            msg = $"{ChestModel.coins} coins and {ChestModel.gems} gems added to the inventory!";
-            UIHandler.Instance.DisplayMessage(msg);
-            ChestView.DestroyChest();
+            case ChestState.Locked:
+                msg = "Please select how you want to open the chest";
+                header = "Unlock Chest!";
+                ChestService.Instance.SetChestView(ChestView);
+                PopUpManager.Instance.DisplayMessageWithButton(header, msg, ChestModel.GemsRequiredToUnlock, GetCurrentState);
+                break;
+            
+            case ChestState.Unlocking:
+                msg = $"Do you want to unlock it now for {ChestModel.GemsRequiredToUnlock} gems?";
+                header = "Unlocking!";
+                PopUpManager.Instance.DisplayMessageWithButton(header, msg, ChestModel.GemsRequiredToUnlock, GetCurrentState);
+                break;
+
+            case ChestState.Unlocked:
+            default:
+                PlayerInventory.Instance.UpdatePlayerInventory(ChestModel.coins, ChestModel.gems);
+                msg = $"{ChestModel.coins} coins and {ChestModel.gems} gems added to the inventory!";
+                header = "Congratulations!";
+                PopUpManager.Instance.DisplayMessage(header, msg);
+                UnSubscribeEvents();
+                ChestView.DestroyChest();
+                break;
         }
     }
-    
+
     public void UnlockUsingGems()
     {
-        bool b_canUnlock = PlayerInventory.Instance.RemoveGems(ChestModel.GemsRequiredToUnlock);
-        if (b_canUnlock)
+        bool canUnlock = PlayerInventory.Instance.DeductGems(ChestModel.GemsRequiredToUnlock);
+        if (canUnlock)
         {
             ChestUnlocked();
         }
         else
         {
             string msg = "You Don't have enough gems!";
-            UIHandler.Instance.DisplayMessage(msg);
+            string header = "Oops!";
+            PopUpManager.Instance.DisplayMessage(header, msg);
         }
     }
 
-    private void ChestUnlocked()
+    public void ChestUnlocked()
     {
         ChangeState(ChestState.Unlocked);
-        ChestModel.GemsRequiredToUnlock = 0;
-        ChestService.Instance.isChestTimerStarted = false;
         ChestModel.unlockTime = 0;
-        ChestView.DisplayChest();
+        ChestModel.GemsRequiredToUnlock = 0;
+        ChestService.Instance.isChestTimerRunning = false;
+        ChestView.DisplayChest(ChestModel.unlockTime, ChestModel.ChestType, ChestModel.lockedChestSprite, ChestModel.unlockedChestSprite);
         ChestService.Instance.UnlockNextChest(ChestView);
-    }
-
-    public async void StartTime()
-    {
-        isStartTime = true;
-        ChestService.Instance.isChestTimerStarted = true;
-        while (ChestModel.unlockTime > 0)
-        {
-            await new WaitForSeconds(1f);
-            ChestModel.unlockTime -= 1;
-        }
     }
 }

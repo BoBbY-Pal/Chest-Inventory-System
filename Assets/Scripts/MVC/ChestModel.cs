@@ -1,16 +1,17 @@
 using Enums;
 using ScriptableObjects;
 using UnityEngine;
+    
 
 public class ChestModel
 {
-    public ChestTypes ChestType { get;}
-    public int coins { get; set; }
+    public ChestTypes ChestType { get; }
+    public int coins { get; }
     public string coinsRange { get; }
     public int gems { get;   }
     public string gemsRange { get; }
     
-    public int unlockTime { get; set; }
+    public float unlockTime { get; set; }
     public int GemsRequiredToUnlock { get; set; }
     
     public Sprite lockedChestSprite { get; }

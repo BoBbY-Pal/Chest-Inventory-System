@@ -1,4 +1,3 @@
-
 using System.Collections.Generic;
 using ScriptableObjects;
 using Singleton;
@@ -14,9 +13,8 @@ public class ChestService : MonoGenericSingleton<ChestService>
     [SerializeField] private ChestView chestPrefab;
     
     public GameObject chestSlotGroup;
-    private int chestSlotFull;
 
-    [SerializeField] private ChestTypeSoList _chestTypeSoList;
+    [SerializeField] private ChestTypeSoList chestTypeSoList;
     
     [SerializeField] private int noOfChests;
     public int noOfChestCanUnlock;
@@ -25,7 +23,7 @@ public class ChestService : MonoGenericSingleton<ChestService>
     [SerializeField] private Button claimChestBtn;
 
     public int chestCounter;
-    public bool isChestTimerStarted { get; set; }
+    public bool isChestTimerRunning { get; set; }
 
     protected override void Awake()
     {
@@ -35,24 +33,26 @@ public class ChestService : MonoGenericSingleton<ChestService>
         
     }
 
-
     private void SpawnChest()
     {
+        SoundManager.Instance.Play(SoundTypes.ButtonPressed);
+        
         chests = new ChestController[noOfChests];
-        int randomNum = Random.Range(0, _chestTypeSoList.chestsTypeList.Length);
+        int randomNum = Random.Range(0, chestTypeSoList.chestsTypeList.Length);
         
         
         if (chestCounter < chests.Length)
         {
-            Debug.Log(chestCounter);
-            chests[chestCounter] = CreateChest(_chestTypeSoList.chestsTypeList[randomNum]);
+            GameLogsManager.CustomLog(chestCounter);;
+            chests[chestCounter] = CreateChest(chestTypeSoList.chestsTypeList[randomNum]);
             chestCounter++;
         }
         else
         {
-            string msg = "Chest slots are full";
-            Debug.Log(msg);
-            UIHandler.Instance.DisplayMessage(msg);
+            string msg = "All chest slots are full";
+            string header = "No More Space!";
+            GameLogsManager.CustomLog(msg);
+            PopUpManager.Instance.DisplayMessage(header, msg);
         }
         
     }
@@ -69,16 +69,16 @@ public class ChestService : MonoGenericSingleton<ChestService>
         chestToUnlock = view;
     }
 
+    public void OpenChestWithGem()
+    {
+        chestToUnlock.chestController.UnlockUsingGems();
+    }
+    
     public void UnlockChest()
     {
         chestUnlockingList.Add(chestToUnlock);
-        chestToUnlock._chestController.ChangeState(ChestState.Unlocking);
-        chestToUnlock._chestController.StartTime();
-    }
-
-    public void UnlockUsingGems()
-    {
-        chestToUnlock._chestController.UnlockUsingGems();
+        chestToUnlock.chestController.ChangeState(ChestState.Unlocking);
+        isChestTimerRunning = true;
     }
 
     public void UnlockNextChest(ChestView chestView)
@@ -86,24 +86,27 @@ public class ChestService : MonoGenericSingleton<ChestService>
         chestUnlockingList.Remove(chestView);
         if (chestUnlockingList.Count > 0)
         {
-            chestUnlockingList[0]._chestController.StartTime();
+            isChestTimerRunning = true;
+            chestUnlockingList[0].chestController.ChangeState(ChestState.Unlocking);
         }
     }
 
     public void AddChestToUnlockList()
     {
         string msg;
-        if (isChestTimerStarted && noOfChestCanUnlock == chestUnlockingList.Count)
+        string header;
+        if (isChestTimerRunning && noOfChestCanUnlock+1 == chestUnlockingList.Count)
         {
+            header = "No More Space!";
             msg = "Can't unlock more chest!";
-            UIHandler.Instance.DisplayMessage(msg);
+            PopUpManager.Instance.DisplayMessage(header, msg);
         }
         else
         {
+            header = "Unlock Chest!";
             msg = "Chest added to the list!";
-            UIHandler.Instance.DisplayMessage(msg);
+            PopUpManager.Instance.DisplayMessage(header, msg);
             chestUnlockingList.Add(chestToUnlock);
-            chestToUnlock._chestController.ChangeState(ChestState.Unlocking);
         }
     }
 }
