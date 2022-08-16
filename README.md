@@ -1,7 +1,7 @@
 # Clash-Royale-Chest-System
 > This is a Clash Royale like Chest Inventory system that i created using MVC and several other design patterns. So MVC design pattern helps developers segregate a code into different other scripts that make code more readable & easily scalable.
 
-##VISUALS:
+## VISUALS:
 
 ![Screenshot (128)](https://user-images.githubusercontent.com/84893882/184971132-09ee2bf1-e541-447e-9c13-b4e6150352b7.png)
 ![Screenshot (135)](https://user-images.githubusercontent.com/84893882/184971392-a62d2739-cb6e-4123-b15a-e3e31635289b.png)
