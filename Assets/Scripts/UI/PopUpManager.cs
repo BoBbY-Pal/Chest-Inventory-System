@@ -19,14 +19,15 @@ namespace UI
         public void OnGemsBtnClicked()
         {
             messageScreen.SetActive(false);
-            OnUnlockUsingGem?.Invoke();
+            // OnUnlockUsingGem?.Invoke();
+            ChestService.Instance.OpenChestWithGem();
         }
         
         public void OnTimerBtnClicked()
         {
             messageScreen.SetActive(false);
             
-            if (ChestService.Instance.isChestTimerStarted)
+            if (ChestService.Instance.isChestTimerRunning)
             {
                 Debug.Log("Entered onTimer btn clicked and chesTimerStarted is true");
                 ChestService.Instance.AddChestToUnlockList();
@@ -58,7 +59,7 @@ namespace UI
             gemsBtn.gameObject.SetActive(true);
             
             string message;
-            if (ChestService.Instance.isChestTimerStarted && ChestService.Instance.noOfChestCanUnlock > 1)
+            if (ChestService.Instance.isChestTimerRunning && ChestService.Instance.noOfChestCanUnlock > 1)
             {
                 message = "Add Chest!";
                 timerBtnTxt.text = message;

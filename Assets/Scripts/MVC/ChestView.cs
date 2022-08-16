@@ -1,4 +1,5 @@
 using System;
+using Enums;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -6,7 +7,7 @@ using UnityEngine.UI;
 public class ChestView : MonoBehaviour
 {
     public ChestController _chestController;
-    private float _time;
+    private float time;
 
     [SerializeField] private TextMeshProUGUI timerTxt;
     [SerializeField] private TextMeshProUGUI chestStatusTxt;
@@ -18,7 +19,6 @@ public class ChestView : MonoBehaviour
     void Start()
     {
         SetParent();
-        DisplayChest();
     }
 
     void Update()
@@ -26,11 +26,11 @@ public class ChestView : MonoBehaviour
         if (_chestController.GetCurrentState == ChestState.Unlocking)
         {
             DecreaseTimer();
+            chestStatusTxt.text = _chestController.GetCurrentState.ToString();
             if (IsTimeOver())
             {
                 timerTxt.text = "READY";
-                _chestController.ChangeState(ChestState.Unlocked);
-                _chestController.StartUnlocking();
+                _chestController.ChestUnlocked();
             }
         }
     }
@@ -43,31 +43,31 @@ public class ChestView : MonoBehaviour
     public void Initialize(ChestController chestController, float time)
     {
         _chestController = chestController;
-        this._time = time;
+        this.time = time;
         Debug.Log("Controller initialized");
     }
 
-    public void DisplayChest()
+    public void DisplayChest(ChestTypes chestType, Sprite lockedChestSprite, Sprite unlockedChestSprite)
     {
-        timerTxt.text = TimeToString(_time);
-        chestTypeTxt.text = _chestController.ChestModel.ChestType.ToString();
+        timerTxt.text = TimeToString(time);
+        chestTypeTxt.text = chestType.ToString();
         chestStatusTxt.text = _chestController.GetCurrentState.ToString();
 
         if (_chestController.GetCurrentState == ChestState.Locked || _chestController.GetCurrentState == ChestState.Unlocking)
         {
-            chestSpriteSlot.sprite = _chestController.ChestModel.lockedChestSprite;
+            chestSpriteSlot.sprite = lockedChestSprite;
         }
         else
         {
-            chestSpriteSlot.sprite = _chestController.ChestModel.unlockedChestSprite;
+            chestSpriteSlot.sprite = unlockedChestSprite;
         }
 
     }
 
     private void DecreaseTimer()
     {
-        _time -= Time.deltaTime;
-        timerTxt.text = TimeToString(_time);
+        time -= Time.deltaTime;
+        timerTxt.text = TimeToString(time);
     }
 
     private string TimeToString(float value)
@@ -77,7 +77,7 @@ public class ChestView : MonoBehaviour
         return timeString;
     }
 
-    private bool IsTimeOver() => _time <= 0;
+    private bool IsTimeOver() => time <= 0;
     
     public void ChestButtonPressed()
     {

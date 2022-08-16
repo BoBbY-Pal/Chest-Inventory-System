@@ -14,7 +14,7 @@ public class ChestService : MonoGenericSingleton<ChestService>
     
     public GameObject chestSlotGroup;
 
-    [SerializeField] private ChestTypeSoList _chestTypeSoList;
+    [SerializeField] private ChestTypeSoList chestTypeSoList;
     
     [SerializeField] private int noOfChests;
     public int noOfChestCanUnlock;
@@ -23,7 +23,7 @@ public class ChestService : MonoGenericSingleton<ChestService>
     [SerializeField] private Button claimChestBtn;
 
     public int chestCounter;
-    public bool isChestTimerStarted { get; set; }
+    public bool isChestTimerRunning { get; set; }
 
     protected override void Awake()
     {
@@ -36,13 +36,13 @@ public class ChestService : MonoGenericSingleton<ChestService>
     private void SpawnChest()
     {
         chests = new ChestController[noOfChests];
-        int randomNum = Random.Range(0, _chestTypeSoList.chestsTypeList.Length);
+        int randomNum = Random.Range(0, chestTypeSoList.chestsTypeList.Length);
         
         
         if (chestCounter < chests.Length)
         {
             Debug.Log(chestCounter);
-            chests[chestCounter] = CreateChest(_chestTypeSoList.chestsTypeList[randomNum]);
+            chests[chestCounter] = CreateChest(chestTypeSoList.chestsTypeList[randomNum]);
             chestCounter++;
         }
         else
@@ -67,10 +67,16 @@ public class ChestService : MonoGenericSingleton<ChestService>
         chestToUnlock = view;
     }
 
+    public void OpenChestWithGem()
+    {
+        chestToUnlock._chestController.UnlockUsingGems();
+    }
+    
     public void UnlockChest()
     {
         chestUnlockingList.Add(chestToUnlock);
         chestToUnlock._chestController.ChangeState(ChestState.Unlocking);
+        isChestTimerRunning = true;
     }
 
     public void UnlockNextChest(ChestView chestView)
@@ -78,7 +84,7 @@ public class ChestService : MonoGenericSingleton<ChestService>
         chestUnlockingList.Remove(chestView);
         if (chestUnlockingList.Count > 0)
         {
-       
+            isChestTimerRunning = true;
             chestUnlockingList[0]._chestController.ChangeState(ChestState.Unlocking);
         }
     }
@@ -87,7 +93,7 @@ public class ChestService : MonoGenericSingleton<ChestService>
     {
         string msg;
         string header;
-        if (isChestTimerStarted && noOfChestCanUnlock == chestUnlockingList.Count)
+        if (isChestTimerRunning && noOfChestCanUnlock+1 == chestUnlockingList.Count)
         {
             header = "No More Space!";
             msg = "Can't unlock more chest!";
@@ -99,7 +105,6 @@ public class ChestService : MonoGenericSingleton<ChestService>
             msg = "Chest added to the list!";
             PopUpManager.Instance.DisplayMessage(header, msg);
             chestUnlockingList.Add(chestToUnlock);
-            chestToUnlock._chestController.ChangeState(ChestState.Unlocking);
         }
     }
 }

@@ -1,4 +1,3 @@
-using DefaultNamespace;
 using UI;
 using UnityEngine;
 
@@ -8,10 +7,10 @@ public enum ChestState
     Unlocking,
     Unlocked
 }
-[System.Serializable]
+
 public class ChestController
 {
-    public ChestModel ChestModel { get; }
+    private ChestModel ChestModel { get; }
     private ChestView ChestView { get; }
 
     private ChestState currentState;
@@ -20,36 +19,26 @@ public class ChestController
     public void ChangeState(ChestState chestState) => currentState = chestState;
 
 
-    public ChestController(ChestModel chestModel, ChestView view)
+    public ChestController(ChestModel model, ChestView view)
     {
-        ChestModel = chestModel;
-        ChestView = GameObject.Instantiate<ChestView>(view);
+        ChestModel = model;
+        ChestView = Object.Instantiate(view);
         
         ChestView.Initialize(this, ChestModel.unlockTime);
         ChangeState(ChestState.Locked);
         PopUpManager.Instance.DisplayChestDetails(ChestModel.ChestType.ToString(), ChestModel.coinsRange, ChestModel.gemsRange);
+        ChestView.DisplayChest(ChestModel.ChestType, ChestModel.lockedChestSprite, ChestModel.unlockedChestSprite);
         SubscribeEvents();
-        
     }
 
     private void SubscribeEvents()
     {
         ChestView.OnChestButtonPressed += ChestBtnPressed;
-        PopUpManager.Instance.OnUnlockUsingGem += UnlockUsingGems;
     }
 
     private void UnSubscribeEvents()
     {
         ChestView.OnChestButtonPressed -= ChestBtnPressed;
-        PopUpManager.Instance.OnUnlockUsingGem -= UnlockUsingGems;
-    }
-    
-    public void StartUnlocking()
-    {
-        if (ChestModel.unlockTime <= 0)
-        {
-            ChestUnlocked();
-        }
     }
 
     private void ChestBtnPressed()
@@ -84,7 +73,7 @@ public class ChestController
         }
     }
 
-    private void UnlockUsingGems()
+    public void UnlockUsingGems()
     {
         bool canUnlock = PlayerInventory.Instance.DeductGems(ChestModel.GemsRequiredToUnlock);
         if (canUnlock)
@@ -99,13 +88,12 @@ public class ChestController
         }
     }
 
-    private void ChestUnlocked()
+    public void ChestUnlocked()
     {
         ChangeState(ChestState.Unlocked);
         ChestModel.GemsRequiredToUnlock = 0;
-        ChestService.Instance.isChestTimerStarted = false;
-        ChestModel.unlockTime = 0;
-        ChestView.DisplayChest();
+        ChestService.Instance.isChestTimerRunning = false;
+        ChestView.DisplayChest(ChestModel.ChestType, ChestModel.lockedChestSprite, ChestModel.unlockedChestSprite);
         ChestService.Instance.UnlockNextChest(ChestView);
     }
 }

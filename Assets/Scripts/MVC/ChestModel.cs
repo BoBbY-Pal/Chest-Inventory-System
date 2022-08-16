@@ -6,12 +6,12 @@ using UnityEngine;
 public class ChestModel
 {
     public ChestTypes ChestType { get; }
-    public int coins { get; set; }
+    public int coins { get; }
     public string coinsRange { get; }
     public int gems { get;   }
     public string gemsRange { get; }
     
-    public float unlockTime { get; set; }
+    public float unlockTime { get; }
     public int GemsRequiredToUnlock { get; set; }
     
     public Sprite lockedChestSprite { get; }

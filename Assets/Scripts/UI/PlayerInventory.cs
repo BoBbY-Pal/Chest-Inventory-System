@@ -1,15 +1,13 @@
-﻿using System;
-using Singleton;
-using TMPro;
+﻿using Singleton;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace DefaultNamespace
+namespace UI
 {
     public class PlayerInventory : MonoGenericSingleton<PlayerInventory>
     {
-        [SerializeField] private int _coins;
-        [SerializeField] private int _gems;
+        [SerializeField] private int coins;
+        [SerializeField] private int gems;
         [SerializeField] private Text coinTxt;
         [SerializeField] private Text gemsTxt;
         private bool hasEnoughGems;
@@ -19,24 +17,24 @@ namespace DefaultNamespace
             DisplayPlayerInventory();
         }
 
-        public void DisplayPlayerInventory()
+        private void DisplayPlayerInventory()
         {
-            coinTxt.text = _coins.ToString();
-            gemsTxt.text = _gems.ToString();
+            coinTxt.text = coins.ToString();
+            gemsTxt.text = gems.ToString();
         }
 
         public void UpdatePlayerInventory(int coins, int gems)
         {
-            _coins += coins;
-            _gems += gems;
+            this.coins += coins;
+            this.gems += gems;
             DisplayPlayerInventory();
         }
         
         public bool DeductGems(int gems)
         {
-            if (gems <= _gems)
+            if (gems <= this.gems)
             {
-                _gems -= gems;
+                this.gems -= gems;
                 DisplayPlayerInventory();
                 hasEnoughGems = true;
             }
