@@ -1,6 +1,7 @@
 ﻿using Chest;
 using Enums;
-using Singleton;
+using Project.Utilities;
+using Sounds;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;

@@ -1,7 +1,8 @@
 using System.Collections.Generic;
 using Enums;
+using Project.Utilities;
 using ScriptableObjects;
-using Singleton;
+using Sounds;
 using UI;
 using UnityEngine;
 using Button = UnityEngine.UI.Button;
