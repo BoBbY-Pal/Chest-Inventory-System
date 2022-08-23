@@ -1,16 +1,20 @@
 ﻿using UnityEngine;
 
-public static class GameLogsManager
+// This script will allow to disable logs in whole project just by changing show logs bool to false. 
+namespace Project.Utilities
 {
-    private static bool showLogs = false;
-
-    public static void CustomLog(object message)
+    public static class GameLogsManager
     {
-        if (!showLogs )
-        {
-            return;
-        }
+        private static bool showLogs = false;
 
-        Debug.Log(message);
+        public static void CustomLog(object message)
+        {
+            if (!showLogs )
+            {
+                return;
+            }
+
+            Debug.Log(message);
+        }
     }
 }

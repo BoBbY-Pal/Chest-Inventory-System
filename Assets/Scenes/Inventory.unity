@@ -2618,7 +2618,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   coins: 25
-  gems: 100
+  gemsInInventory: 50
   coinTxt: {fileID: 408489194}
   gemsTxt: {fileID: 530161311}
 --- !u!1 &1797604906

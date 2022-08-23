@@ -1,93 +1,103 @@
 using System;
 using Enums;
+using Project.Utilities;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class ChestView : MonoBehaviour
+namespace Chest
 {
-    public ChestController chestController;
-    private float time;
-
-    [SerializeField] private TextMeshProUGUI timerTxt;
-    [SerializeField] private TextMeshProUGUI chestStatusTxt;
-    [SerializeField] private TextMeshProUGUI chestTypeTxt;
-    [SerializeField] private Image chestSpriteSlot;
-    public event Action OnChestButtonPressed;
-
-
-    void Start()
+    public class ChestView : MonoBehaviour
     {
-        SetParent();
-    }
+        public ChestController chestController;
+        private float chestLocaltime;
 
-    void Update()
-    {
-        if (chestController.GetCurrentState == ChestState.Unlocking)
+        [SerializeField] private TextMeshProUGUI timerTxt;
+        [SerializeField] private TextMeshProUGUI chestStatusTxt;
+        [SerializeField] private TextMeshProUGUI chestTypeTxt;
+        [SerializeField] private Image chestSpriteSlot;
+        [SerializeField] private Button chestButton; 
+        public event Action OnChestButtonPressed;
+
+
+        private void Awake()
         {
-            DecreaseTimer();
-            chestStatusTxt.text = chestController.GetCurrentState.ToString();
-            if (IsTimeOver())
+            chestButton.onClick.AddListener(ChestButtonPressed);
+        }
+
+        private void Start()
+        {
+            SetParent();
+        }
+
+        private void Update()
+        {
+            if (chestController.currentState == ChestState.Unlocking)
             {
-                timerTxt.text = "READY";
-                chestController.ChestUnlocked();
+                DecreaseTimer();
+                chestStatusTxt.text = chestController.currentState.ToString();
+                if (IsTimeOver())
+                {
+                    timerTxt.text = "READY";
+                    chestController.ChestUnlocked();
+                }
             }
         }
-    }
     
-    private void SetParent()
-    {
-        transform.SetParent(ChestService.Instance.chestSlotGroup.transform);
-    }
-
-    public void Initialize(ChestController chestController, float time)
-    {
-        this.chestController = chestController;
-        this.time = time;
-        GameLogsManager.CustomLog("Controller initialized");
-    }
-
-    public void DisplayChest(float chestTime, ChestTypes chestType, Sprite lockedChestSprite, Sprite unlockedChestSprite)
-    {
-        time = chestTime;
-        timerTxt.text = TimeToString(time);
-        chestTypeTxt.text = chestType.ToString();
-        chestStatusTxt.text = chestController.GetCurrentState.ToString();
-
-        if (chestController.GetCurrentState == ChestState.Locked || chestController.GetCurrentState == ChestState.Unlocking)
+        private void SetParent()
         {
-            chestSpriteSlot.sprite = lockedChestSprite;
-        }
-        else
-        {
-            chestSpriteSlot.sprite = unlockedChestSprite;
+            transform.SetParent(ChestService.Instance.chestSlotGroup.transform);
         }
 
-    }
+        public void Initialize(ChestController controller, float time)
+        {
+            chestController = controller;
+            chestLocaltime = time;
+            GameLogsManager.CustomLog("Controller initialized");
+        }
 
-    private void DecreaseTimer()
-    {
-        time -= Time.deltaTime;
-        timerTxt.text = TimeToString(time);
-    }
+        public void DisplayChest(float chestTime, ChestTypes chestType, Sprite lockedChestSprite, Sprite unlockedChestSprite)
+        {
+            chestLocaltime = chestTime;
+            timerTxt.text = TimeToString(chestLocaltime);
+            chestTypeTxt.text = chestType.ToString();
+            chestStatusTxt.text = chestController.currentState.ToString();
 
-    private string TimeToString(float value)
-    {
-        TimeSpan time = TimeSpan.FromSeconds(value);
-        string timeString = time.ToString(@"hh\:mm\:ss");
-        return timeString;
-    }
+            if (chestController.currentState == ChestState.Locked || chestController.currentState == ChestState.Unlocking)
+            {
+                chestSpriteSlot.sprite = lockedChestSprite;
+            }
+            else
+            {
+                chestSpriteSlot.sprite = unlockedChestSprite;
+            }
 
-    private bool IsTimeOver() => time <= 0;
+        }
+
+        private void DecreaseTimer()
+        {
+            chestLocaltime -= Time.deltaTime;
+            timerTxt.text = TimeToString(chestLocaltime);
+        }
+
+        private string TimeToString(float value)
+        {
+            TimeSpan time = TimeSpan.FromSeconds(value);
+            string timeString = time.ToString(@"hh\:mm\:ss");
+            return timeString;
+        }
+
+        private bool IsTimeOver() => chestLocaltime <= 0;
     
-    public void ChestButtonPressed()
-    {
-        OnChestButtonPressed?.Invoke();
-    }
+        private void ChestButtonPressed()
+        {
+            OnChestButtonPressed?.Invoke();
+        }
 
-    public void DestroyChest()
-    {
-        Destroy(gameObject);
-        ChestService.Instance.chestCounter--;
+        public void DestroyChest()
+        {
+            Destroy(gameObject);
+            ChestService.Instance.chestCounter--;
+        }
     }
 }

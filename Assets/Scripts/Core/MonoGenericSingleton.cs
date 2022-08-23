@@ -1,7 +1,6 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 
-namespace Singleton
+namespace Project.Utilities
 {
     public class MonoGenericSingleton<T> : MonoBehaviour where T: MonoGenericSingleton<T>
     {

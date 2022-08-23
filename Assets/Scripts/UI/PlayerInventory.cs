@@ -1,4 +1,4 @@
-﻿using Singleton;
+﻿using Project.Utilities;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -6,11 +6,10 @@ namespace UI
 {
     public class PlayerInventory : MonoGenericSingleton<PlayerInventory>
     {
-        [SerializeField] private int coins;
-        [SerializeField] private int gems;
+        [SerializeField] private int coinsInInventory;
+        [SerializeField] private int gemsInInventory;
         [SerializeField] private Text coinTxt;
         [SerializeField] private Text gemsTxt;
-        private bool hasEnoughGems;
 
         private void Start()
         {
@@ -19,31 +18,26 @@ namespace UI
 
         private void DisplayPlayerInventory()
         {
-            coinTxt.text = coins.ToString();
-            gemsTxt.text = gems.ToString();
+            coinTxt.text = coinsInInventory.ToString();
+            gemsTxt.text = gemsInInventory.ToString();
         }
 
         public void UpdatePlayerInventory(int coins, int gems)
         {
-            this.coins += coins;
-            this.gems += gems;
+            this.coinsInInventory += coins;
+            gemsInInventory += gems;
             DisplayPlayerInventory();
         }
         
-        public bool DeductGems(int gems)
+        public bool DeductGems(int requiredGems)
         {
-            if (gems <= this.gems)
+            if (requiredGems <= gemsInInventory)
             {
-                this.gems -= gems;
+                gemsInInventory -= requiredGems;
                 DisplayPlayerInventory();
-                hasEnoughGems = true;
+                return true;
             }
-            else
-            {
-                hasEnoughGems = false;
-            }
-            
-            return hasEnoughGems;
+            return false;
         }
     }
 }
