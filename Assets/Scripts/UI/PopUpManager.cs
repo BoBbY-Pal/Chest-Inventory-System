@@ -1,4 +1,6 @@
-﻿using Singleton;
+﻿using Chest;
+using Enums;
+using Singleton;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
